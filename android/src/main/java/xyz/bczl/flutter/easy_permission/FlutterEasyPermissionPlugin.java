@@ -15,12 +15,10 @@ import java.util.List;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -39,22 +37,13 @@ public class FlutterEasyPermissionPlugin implements FlutterPlugin,
 
     private MethodChannel mCallbackChannel;
 
-    public static void registerWith(Registrar registrar) {
-        final FlutterEasyPermissionPlugin instance = new FlutterEasyPermissionPlugin();
-        instance.onAttachedToEngine(registrar.context(), registrar.messenger());
-    }
-
-    private void onAttachedToEngine(Context context, BinaryMessenger messenger) {
-        mContext = context;
-        mChannel = new MethodChannel(messenger, "xyz.bczl.flutter_easy_permission/permissions");
-        mChannel.setMethodCallHandler(this);
-
-        mCallbackChannel = new MethodChannel(messenger, "xyz.bczl.flutter_easy_permission/callback");
-    }
-
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
+        mContext = binding.getApplicationContext();
+        mChannel = new MethodChannel(binding.getBinaryMessenger(), "xyz.bczl.flutter_easy_permission/permissions");
+        mChannel.setMethodCallHandler(this);
+
+        mCallbackChannel = new MethodChannel(binding.getBinaryMessenger(), "xyz.bczl.flutter_easy_permission/callback");
     }
 
     @Override
